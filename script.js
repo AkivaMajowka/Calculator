@@ -14,8 +14,8 @@ function divide(a, b) {
   return a / b;
 }
 
-function operate(operation, a, b) {
-  switch (operation) {
+function operate(operator, a, b) {
+  switch (operator) {
     case "+":
       return add(a, b);
       break;
@@ -35,42 +35,74 @@ function operate(operation, a, b) {
 }
 
 function numberCreator(e) {
-  if (SelectedOperator === "") {
+  if (selectedOperator === "") {
     firstNumberToOperate += e.target.innerText;
+
+    displayBig = firstNumberToOperate;
+    updateDisplay(displayBig);
   } else {
     secondNumberToOperate += e.target.innerText;
+
+    displaySmall = `${firstNumberToOperate} ${selectedOperator}`;
+    displayBig = secondNumberToOperate;
+    updateDisplay(displayBig, displaySmall);
   }
 }
 
 function assignOperator(e) {
-  if (SelectedOperator == "") {
-    SelectedOperator = e.target.innerText;
-  } else {
+  // Handles the first time operating
+  if (selectedOperator == "") {
+    selectedOperator = e.target.innerText;
+
+    displaySmall = firstNumberToOperate;
+    displayBig = selectedOperator;
+    updateDisplay(displayBig, displaySmall);
+  }
+  // Handles a second operation before the result button is pressed
+  else {
     calculateResult();
     firstNumberToOperate = result;
     secondNumberToOperate = "";
-    SelectedOperator = e.target.innerText;
+    selectedOperator = e.target.innerText;
+
+    displaySmall = `${result} ${selectedOperator}`
+    updateDisplay("0", displaySmall)
   }
 }
 
 function calculateResult() {
   result = operate(
-    SelectedOperator,
+    selectedOperator,
     parseInt(firstNumberToOperate),
     parseInt(secondNumberToOperate)
   );
-  console.log(result);
+
+  displaySmall = `${firstNumberToOperate} ${selectedOperator} ${secondNumberToOperate}`;
+  displayBig = result;
+  updateDisplay(displayBig, displaySmall);
 }
 
 function eraseLastNumber() {
-  
+  // take action only if theres a number currently being written
+  if (firstNumberToOperate !== "" || secondNumberToOperate !== "") {
+  }
 }
 
 function resetAll() {
   firstNumberToOperate = "";
   secondNumberToOperate = "";
-  SelectedOperator = "";
+  selectedOperator = "";
   result = 0;
+
+  updateDisplay("0");
+}
+
+function updateDisplay(a, b = "") {
+  let mainText = document.querySelector(".display__big-text");
+  let secondText = document.querySelector(".display__small-text");
+
+  mainText.innerText = a;
+  secondText.innerText = b;
 }
 
 let numberButtons = document.querySelectorAll(".number-button");
@@ -90,5 +122,7 @@ resetButton.addEventListener("click", resetAll);
 
 let firstNumberToOperate = "";
 let secondNumberToOperate = "";
-let SelectedOperator = "";
+let selectedOperator = "";
+let displayBig = "";
+let displaySmall = "";
 let result = 0;
