@@ -35,13 +35,22 @@ function operate(operator, a, b) {
 }
 
 function numberCreator(e) {
+  //error handler
+  if (lastAction == "result") {
+    return
+  }
+
   if (selectedOperator === "") {
     firstNumberToOperate += e.target.innerText;
+
+    lastAction = "number1";
 
     displayBig = firstNumberToOperate;
     updateDisplay(displayBig);
   } else {
     secondNumberToOperate += e.target.innerText;
+
+    lastAction = "number2";
 
     displaySmall = `${firstNumberToOperate} ${selectedOperator}`;
     displayBig = secondNumberToOperate;
@@ -50,10 +59,16 @@ function numberCreator(e) {
 }
 
 function assignOperator(e) {
+  //error handler
+  if (firstNumberToOperate === "" || lastAction === "operator") {
+    return;
+  }
+
   // Handles the first time operating
   if (selectedOperator == "") {
     selectedOperator = e.target.innerText;
 
+    //display updates
     displaySmall = firstNumberToOperate;
     displayBig = selectedOperator;
     updateDisplay(displayBig, displaySmall);
@@ -65,30 +80,33 @@ function assignOperator(e) {
     secondNumberToOperate = "";
     selectedOperator = e.target.innerText;
 
-    displaySmall = `${result} ${selectedOperator}`
-    updateDisplay("0", displaySmall)
+    //display updates
+    displaySmall = `${result} ${selectedOperator}`;
+    updateDisplay("0", displaySmall);
   }
+  lastAction = "operator";
 }
 
 function calculateResult() {
+  //Error handler
+  if (secondNumberToOperate == "") {
+    return
+  }
+
   result = operate(
     selectedOperator,
-    parseInt(firstNumberToOperate),
-    parseInt(secondNumberToOperate)
+    Number(firstNumberToOperate),
+    Number(secondNumberToOperate)
   );
+  lastAction = "result";
 
   displaySmall = `${firstNumberToOperate} ${selectedOperator} ${secondNumberToOperate}`;
   displayBig = result;
   updateDisplay(displayBig, displaySmall);
 }
 
-function eraseLastNumber() {
-  // take action only if theres a number currently being written
-  if (firstNumberToOperate !== "" || secondNumberToOperate !== "") {
-  }
-}
-
 function resetAll() {
+  lastAction = "";
   firstNumberToOperate = "";
   secondNumberToOperate = "";
   selectedOperator = "";
@@ -114,12 +132,10 @@ operatorButtons.forEach((i) => i.addEventListener("click", assignOperator));
 let resultButton = document.querySelector(".result-button");
 resultButton.addEventListener("click", calculateResult);
 
-let eraseButton = document.querySelector(".erase-button");
-eraseButton.addEventListener("click", eraseLastNumber);
-
 let resetButton = document.querySelector(".reset-button");
 resetButton.addEventListener("click", resetAll);
 
+let lastAction = "";
 let firstNumberToOperate = "";
 let secondNumberToOperate = "";
 let selectedOperator = "";
