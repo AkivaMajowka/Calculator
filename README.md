@@ -1,2 +1,5 @@
 # Calculator
-Functional calculator with UI
+
+A Functional calculator 
+
+Stack: HTML CSS JavaScript
